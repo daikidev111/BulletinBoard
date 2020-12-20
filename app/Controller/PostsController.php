@@ -9,7 +9,6 @@ class PostsController extends AppController {
 
 	//File Name: view.ctp
 	public function view($id = null) {
-		debug($id);
 		if (!$id) {
 			throw new NotFoundException(__('Invalid Post'));
 		}
