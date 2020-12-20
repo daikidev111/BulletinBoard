@@ -9,7 +9,6 @@ class PostsController extends AppController {
 
 	//File Name: view.ctp
 	public function view($id = null) {
-		debug($id);
 		if (!$id) {
 			throw new NotFoundException(__('Invalid Post'));
 		}
@@ -25,11 +24,12 @@ class PostsController extends AppController {
 		//This is to check a form method
 		if ($this->request->is('post')) {
 			//to save new information
-			$this->Post->create();
+			//$this->Post->create();
+			$this->request->data['Post']['user_id'] = $this->Auth->user('id');
 			//check the validation error and check if it needs to be stopped
 			if ($this->Post->save($this->request->data)) {
 				//$this->request->data contains data from the post method
-				//Flash method sets the success message into the session variable
+				//Flash method sets the success message into the session variable, allowing it to be displayed on the redirected page.
 				$this->Flash->success(__('Your post has been saved'));
 				return $this->redirect(array('action' => 'index'));
 			}
