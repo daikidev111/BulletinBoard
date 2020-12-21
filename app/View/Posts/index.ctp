@@ -12,7 +12,7 @@
 <br>
 <?php echo $this->Html->link('register', array('controller' => 'users', 'action' => 'add')); ?>
 <br>
-<?php echo $this->Html->link('Login', array('controller' => 'users', 'action' => 'index')); ?>
+<?php echo $this->Html->link('Login', array('controller' => 'users', 'action' => 'login')); ?>
 <?php endif; ?>
 <table>
 <tr>
