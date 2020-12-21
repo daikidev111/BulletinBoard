@@ -34,16 +34,8 @@ class AppController extends Controller {
 	public $components = array(
 		'DebugKit.Toolbar',
 		'Flash',
+		'Session',
 		'Auth' => array(
-			'loginRedirect' => array(
-				'controller' => 'posts',
-				'action' => 'index'
-			),
-			'logoutRedirect' => array(
-				'controller' => 'pages',
-				'action' => 'display',
-				'home'
-			),
 			'authenticate' => array(
 				'Form' => array(
 					'passwordHasher' => 'Blowfish'
@@ -54,6 +46,37 @@ class AppController extends Controller {
 
 	public function beforeFilter() {
 		$this->Auth->allow('index', 'view');
+		$this->Auth->authError = 'Please login to view that page';
+		$this->Auth->loginError = 'Incorrect username/password';
+		$this->Auth->loginRedirect = array('controller' => 'posts', 'action' => 'index');
+		$this->Auth->logoutRedirect = array('controller' => 'posts', 'action' => 'index');
+		$this->set('logged_in', $this->_loggedIn());
+		$this->set('users_username', $this->_usersUsername());
 	}
+
+	function _loggedIn() {
+		$logged_in = false;
+		if ($this->Auth->user()) {
+			$logged_in = true;
+		}
+		return $logged_in;
+	}
+
+	function _usersUsername() {
+		$users_username = null;
+		if ($this->Auth->user()) {
+			$users_username = $this->Auth->user('username');
+		}
+		return $users_username;
+	}
+
+	public function isAuthorized($user) {
+		if (isset($user)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 }
 
