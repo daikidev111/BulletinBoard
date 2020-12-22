@@ -4,7 +4,6 @@ class PostsController extends AppController {
 	public $components = array('Flash');
 
 	public function index() {
-		//$this->set('posts', $this->Post->find('all'));
 		$this->set('posts', $this->Post->find('all', ['Post.user_id' => 'User.id', 'recursive' => 1]));
 	}
 
@@ -30,7 +29,6 @@ class PostsController extends AppController {
 			if ($this->request->is('post')) {
 				//to save new information
 				$this->Post->create();
-				//manipulate the post data so that it can be inserted into the database
 				//$this->Post->save = INSERT INTO POST ...
 				$this->request->data['Post']['user_id'] = $this->Session->read('Auth.User.User.id');
 				if ($this->Post->save($this->request->data)) {
@@ -104,20 +102,6 @@ class PostsController extends AppController {
 		return $this->redirect(array('action' => 'index'));
 	}
 
-	public function isAuthorized($user) {
-		if ($this->action == 'add') {
-			return true;
-		}
-
-		if (in_array($this->action, array('edit', 'delete'))) {
-			$postId = (int) $this->request->params['pass'][0];
-			if ($this->Post->isOwnedBy($postId, $user['id'])) {
-				return true;
-			} else {
-				throw new MethodNotAllowedException('他人の投稿は編集できません');
-			}
-		}
-	}
 }
 
 

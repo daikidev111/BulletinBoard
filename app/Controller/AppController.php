@@ -42,7 +42,7 @@ class AppController extends Controller {
 					'fields' => array('username' => 'mail')
 				)
 			),
-			'authorize' => array('controller')
+			'authorize' => array('Controller')
 		)
 	);
 
@@ -73,11 +73,7 @@ class AppController extends Controller {
 	}
 
 	public function isAuthorized($user) {
-		if (isset($user)) {
-			return true;
-		} else {
-			return false;
-		}
+		return true;
 	}
 
 }
