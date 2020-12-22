@@ -8,28 +8,33 @@ class UsersController extends AppController {
 		parent::beforeFilter();
 		$this->Auth->allow('add');
 	}
+
 	public function login() {
-		if ($this->request->is('post')) {
-			if ($this->Auth->login($this->request->data)) {
+		if (empty($this->Session->read('Auth.User.User.id'))) {
+			if ($this->request->is('post')) {
+				if ($this->Auth->login()) {
 
-				//get the result of the database
-				$result = $this->User->find('all', ['recursive' => -1]);
-				foreach ($result as $res) {
-					//compare if it is the same
-					if ($res['User']['mail'] == $this->request->data['User']['mail']) {
-						$username = $res['User']['username'];
-						$id = $res['User']['id'];
+					//get the result of the database
+					$result = $this->User->find('all', ['recursive' => -1]);
+					foreach ($result as $res) {
+						//compare if it is the same
+						if ($res['User']['mail'] == $this->request->data['User']['mail']) {
+							$username = $res['User']['username'];
+							$id = $res['User']['id'];
+						}
 					}
+
+					$this->Session->write('Auth.User.User.username', $username);
+					$this->Session->write('Auth.User.User.id', $id);
+
+					return $this->redirect($this->Auth->redirectUrl());
+
+				} else {
+					$this->Flash->error(__('Invalid email or password. Please try again'));
 				}
-
-				$this->Session->write('Auth.User.User.username', $username);
-				$this->Session->write('Auth.User.User.id', $id);
-
-				return $this->redirect($this->Auth->redirect());
-
-			} else {
-				$this->Flash->error(__('Invalid email or password. Please try again'));
 			}
+		} else {
+			$this->redirect(array('controller' => 'Posts', 'action' => 'index'));
 		}
 	}
 

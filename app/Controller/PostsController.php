@@ -11,13 +11,15 @@ class PostsController extends AppController {
 	//File Name: view.ctp
 	public function view($id = null) {
 		if (!$id) {
-			throw new NotFoundException(__('Invalid Post'));
+			$this->Flash->error(__('Invalid post'));
+			return $this->redirect(array('action' => 'index'));
 		}
 
 		//Finding a post corresponding to the ID from a table named Post
 		$post = $this->Post->findById($id);
 		if (!$post) {
-			throw new NotFoundException(__('invalid post'));
+			$this->Flash->error(__('Invalid post'));
+			return $this->redirect(array('action' => 'index'));
 		}
 		$this->set('post', $post);
 	}
@@ -44,13 +46,15 @@ class PostsController extends AppController {
 
 	public function edit($id = null) {
 		if (!$id) {
-			throw new NotFoundException(__('Invalid Post'));
+			$this->Flash->error(__('Invalid post'));
+			return $this->redirect(array('action' => 'index'));
 		}
 
 		$post = $this->Post->findById($id);
 		$user_id = $post['Post']['user_id'];
 		if (!$post) {
-			throw new NotFoundException(__('Invalid Post'));
+			$this->Flash->error(__('Invalid post'));
+			return $this->redirect(array('action' => 'index'));
 		}
 
 		if ($user_id == $this->Session->read('Auth.User.User.id')) {
@@ -80,7 +84,8 @@ class PostsController extends AppController {
 		$post = $this->Post->findById($id);
 
 		if (!$post) {
-			throw new NotFoundException(__('Invalid Post'));
+			$this->Flash->error(__('Invalid post'));
+			return $this->redirect(array('action' => 'index'));
 		}
 
 		$user_id = $post['Post']['user_id'];
