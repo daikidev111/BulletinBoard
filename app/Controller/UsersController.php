@@ -17,7 +17,6 @@ class UsersController extends AppController {
 					//get the result of the database
 					$result = $this->User->find('all', ['recursive' => -1]);
 					foreach ($result as $res) {
-						//compare if it is the same
 						if ($res['User']['mail'] == $this->request->data['User']['mail']) {
 							$username = $res['User']['username'];
 							$id = $res['User']['id'];

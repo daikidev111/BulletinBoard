@@ -53,7 +53,6 @@ class AppController extends Controller {
 		$this->Auth->loginRedirect = array('controller' => 'posts', 'action' => 'index');
 		$this->Auth->logoutRedirect = array('controller' => 'posts', 'action' => 'index');
 		$this->set('logged_in', $this->_loggedIn());
-		$this->set('users_username', $this->_usersUsername());
 	}
 
 	function _loggedIn() {
@@ -62,14 +61,6 @@ class AppController extends Controller {
 			$logged_in = true;
 		}
 		return $logged_in;
-	}
-
-	function _usersUsername() {
-		$users_username = null;
-		if ($this->Auth->user()) {
-			$users_username = $this->Auth->user('username');
-		}
-		return $users_username;
 	}
 
 	public function isAuthorized($user) {
