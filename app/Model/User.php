@@ -12,30 +12,47 @@ class User extends AppModel {
 		'username' => array(
 			'required' => array(
 				'rule' => 'notBlank',
-				'message' => 'A username is required'
+				'message' => 'A username is required',
+				'on' => 'create'
 			)
 		),
 		'mail' => array(
 			'NotEmpty' => array(
 				'rule' => 'isUnique',
 				'message' => 'That mail has already been taken.',
-				'required' => true
+				'required' => true,
+				'on' => 'create'
 			),
 			'Email' => array(
 				'rule' => array('email'),
 				'message' => 'Invalid mail.',
-				'required' => true
+				'required' => true,
+				'on' => 'create'
 			)
 		),
 		'password' => array(
 			'required' => array(
 				'rule' => 'notBlank',
-				'message' => 'A password is required'
+				'message' => 'A password is required',
+				'on' => 'create'
 			),
 			'The passwords do not match' => array(
 				'rule' => 'matchPasswords',
-				'message' => 'The passwords do not match'
+				'message' => 'The passwords do not match',
+				'on' => 'create'
 			)
+		),
+		'image' => array(
+			'rule' => array('extension', array('jpg', 'png', 'jpeg')),
+			'message' => 'Invalid File Extension',
+			'allowEmpty' => 'true',
+			'required' => 'true'
+		),
+		'comment' => array(
+			'rule' => array('maxLength', 255),
+			'message' => 'The comment is too long.',
+			'allowEmpty' => 'true',
+			'required' => 'true'
 		)
 	);
 

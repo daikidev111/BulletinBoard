@@ -7,14 +7,12 @@ class PostsController extends AppController {
 		$this->set('posts', $this->Post->find('all', ['Post.user_id' => 'User.id', 'recursive' => 1]));
 	}
 
-	//File Name: view.ctp
 	public function view($id = null) {
 		if (!$id) {
 			$this->Flash->error(__('Invalid post'));
 			return $this->redirect(array('action' => 'index'));
 		}
 
-		//Finding a post corresponding to the ID from a table named Post
 		$post = $this->Post->findById($id);
 		if (!$post) {
 			$this->Flash->error(__('Invalid post'));
@@ -24,21 +22,18 @@ class PostsController extends AppController {
 	}
 
 	public function add() {
-		if (!empty($this->Session->read('Auth.User.User.id'))) {
-			//This is to check a form method
+		if (!empty($this->Session->read('Auth.User'))) {
 			if ($this->request->is('post')) {
-				//to save new information
 				$this->Post->create();
-				//$this->Post->save = INSERT INTO POST ...
 				$this->request->data['Post']['user_id'] = $this->Session->read('Auth.User.User.id');
 				if ($this->Post->save($this->request->data)) {
-					//$this->request->data contains data from the post method
-					//Flash method sets the success message into the session variable, allowing it to be diplayed on the redirected page.
 					$this->Flash->success(__('Your post has been saved'));
 					return $this->redirect(array('action' => 'index'));
 				}
 				$this->Flash->error(__('Unable to add your post.'));
 			}
+		} else {
+			$this->redirect(array('controller' => 'Users', 'action' => 'add'));
 		}
 	}
 
@@ -58,6 +53,12 @@ class PostsController extends AppController {
 		if ($user_id == $this->Session->read('Auth.User.User.id')) {
 			if ($this->request->is(array('post', 'put'))) {
 				$this->Post->id = $id;
+
+				if ($this->request->data['Post']['id'] !== $this->request->params['pass'][0]) {
+					$this->Flash->error(__('Invalid Post ID'));
+					$this->redirect(array('action' => 'index'));
+				}
+
 				if ($this->Post->save($this->request->data)) {
 					$this->Flash->success(__('Your post has been updated'));
 					return $this->redirect(array('action' => 'index'));

@@ -2,6 +2,7 @@
 
 class Post extends AppModel {
 	public $belongsTo = 'User';
+
 	//this is to validate when save method is called.
 	public $validate = array(
 		'title' => array(

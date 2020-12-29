@@ -17,15 +17,16 @@
 <table>
 <tr>
 <th>ID</th>
+<th>Poster</th>
 <th>Title</th>
 <th>Action</th>
 <th>Body</th>
 <th>Created</th>
-<th>Creator</th>
 </tr>
 <?php foreach ($posts as $post): ?>
 <tr>
 <td><?php echo $post['Post']['id']; ?></td>
+<td><?php echo $this->Html->link($post['User']['username'], array('controller' => 'users', 'action' => 'view', $post['Post']['user_id'])); ?></td>
 <td><?php echo $this->Html->link($post['Post']['title'], array('controller' => 'posts', 'action' => 'view', $post['Post']['id'])); ?></td>
 <td>
 <?php if ($this->Session->read('Auth.User.User.id') == $post['Post']['user_id']): ?>
@@ -36,7 +37,6 @@
 </td>
 <td><?php echo $post['Post']['body']; ?></td>
 <td><?php echo $post['Post']['created']; ?></td>
-<td><?php echo $post['User']['username']; ?></td>
 </tr>
 <?php endforeach; ?>
 <?php unset($post); ?>

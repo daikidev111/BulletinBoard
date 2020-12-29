@@ -47,7 +47,7 @@ class AppController extends Controller {
 	);
 
 	public function beforeFilter() {
-		$this->Auth->allow('index', 'view');
+		$this->Auth->allow('index', 'view', 'add');
 		$this->Auth->authError = 'Please login to view that page';
 		$this->Auth->loginError = 'Incorrect username/password';
 		$this->Auth->loginRedirect = array('controller' => 'posts', 'action' => 'index');
