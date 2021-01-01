@@ -1,14 +1,14 @@
 <?php
 
 App::uses('AppController', 'Controller');
-
+App::uses('CakeEmail','Network/Email');
 class UsersController extends AppController {
 	public $helpers = array('Html', 'Form', 'Flash');
 	public $components = array('Security');
 	public function beforeFilter() {
 		//call the previous logic in this controller as well
 		parent::beforeFilter();
-		$this->Auth->allow('add');
+		$this->Auth->allow('add', 'forgot_password', 'reset_password', 'error');
 		$this->Security->blackHoleCallback = 'blackhole';
 	}
 
@@ -87,6 +87,7 @@ class UsersController extends AppController {
 
 	}
 
+
 	public function edit() {
 		if (!empty($this->Session->read('Auth.User.User.id'))) {
 			$id = $this->Session->read('Auth.User.User.id');
@@ -137,6 +138,66 @@ class UsersController extends AppController {
 			$this->Flash->error(__('unauthorised access'));
 			return $this->redirect(array('controller' => 'Posts', 'action' => 'index'));
 		}
+	}
+
+	public function forgot_password() {
+		if ($this->request->is('post')) {
+			if (isset($this->request->data['User']['mail'])) {
+				$mail = $this->request->data['User']['mail'];
+				$data = $this->User->findByMail($mail);
+				if ($data) {
+					$this->request->data['User']['pass_token'] = sha1(uniqid(rand(), true));
+					$this->request->data['User']['reset_time'] = strval(date("Y-m-d H:i:s"));
+					$email = new CakeEmail();
+					$email->to($mail);
+					$email->from('daikikubo2@gmail.com');
+					$email->subject('Password reset form');
+					$url = 'https://procir-study.site/kubo421/CakePHP/cakephp/users/reset_password?pass_token=' . $this->request->data['User']['pass_token'];
+					if ($email->send($url)) {
+						$this->User->id = $data['User']['id'];
+						$this->User->save($this->request->data, false, array('pass_token', 'reset_time'));
+					}
+				}
+				$this->Flash->success(__('Successfully sent a password reset form to the mail.'));
+				return $this->redirect(array('action' => 'login'));
+			}
+		}
+	}
+
+	public function reset_password() {
+		$valid_search = false;
+		$valid_time = false;
+		if (!empty($this->request->query['pass_token'])) {
+			$user_data = $this->User->findByPass_token($this->request->query['pass_token']);
+			if (!empty($user_data['User'])) {
+				$reset_time = $user_data['User']['reset_time'];
+				$limit_time = date("Y-m-d H:i:s", strtotime("-30mins"));
+				$valid_search = true;
+				if (strtotime($reset_time) >= strtotime($limit_time)) {
+					$valid_time = true;
+				}
+			}
+		}
+
+		if ($this->request->is('post')) {
+			if ($valid_time && $valid_search) {
+				$this->User->id = $user_data['User']['id'];
+				$this->request->data['User']['pass_token'] = null;
+				$this->request->data['User']['reset_time'] = null;
+				if ($this->User->save($this->request->data, true, array('password', 'pass_token', 'reset_time'))) {
+					$this->Flash->success(__('Successfully reset the password'));
+					$this->redirect(array('action' => 'login'));
+				} else {
+					$this->Flash->error(__('Failed to reset the password. Please try again'));
+				}
+			} else {
+				$this->redirect(array('action' => 'error'));
+			}
+		}
+	}
+
+	public function error() {
+		$this->Flash->error(__('Unauthorized access'));
 	}
 
 	public function logout() {

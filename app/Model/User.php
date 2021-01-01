@@ -13,7 +13,6 @@ class User extends AppModel {
 			'required' => array(
 				'rule' => 'notBlank',
 				'message' => 'A username is required',
-				'on' => 'create'
 			)
 		),
 		'mail' => array(
@@ -21,25 +20,21 @@ class User extends AppModel {
 				'rule' => 'isUnique',
 				'message' => 'That mail has already been taken.',
 				'required' => true,
-				'on' => 'create'
 			),
 			'Email' => array(
 				'rule' => array('email'),
 				'message' => 'Invalid mail.',
 				'required' => true,
-				'on' => 'create'
 			)
 		),
 		'password' => array(
 			'required' => array(
 				'rule' => 'notBlank',
 				'message' => 'A password is required',
-				'on' => 'create'
 			),
 			'The passwords do not match' => array(
 				'rule' => 'matchPasswords',
 				'message' => 'The passwords do not match',
-				'on' => 'create'
 			)
 		),
 		'image' => array(
@@ -63,7 +58,6 @@ class User extends AppModel {
 		$this->invalidate('password_confirmation', 'The passwords do not match');
 		return false;
 	}
-
 	public function beforeSave($options = array()) {
 		if (isset($this->data[$this->alias]['password'])) {
 			$passwordHasher = new BlowfishPasswordHasher();
